@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MahasiswaModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class MahasiswaController extends Controller
 {
@@ -11,7 +13,8 @@ class MahasiswaController extends Controller
      */
     public function index()
     {
-        return view('index');
+        $data = MahasiswaModel::orderBy('nim', 'desc')->paginate(4);
+        return view('index')->with('data', $data);
     }
 
     /**
@@ -19,7 +22,7 @@ class MahasiswaController extends Controller
      */
     public function create()
     {
-        //
+        return view('create');
     }
 
     /**
@@ -27,7 +30,28 @@ class MahasiswaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Session::flash('nim', $request->nim);
+        Session::flash('nama', $request->nama);
+        Session::flash('jurusan', $request->jurusan);
+
+        $request->validate([
+            'nim' => 'required|numeric|unique:mahasiswa_model,nim',
+            'nama' => 'required',
+            'jurusan' => 'required'
+        ],[
+            'nim.required' => 'NIM harus diisi',
+            'nim.numeric' => 'NIM harus berupa angka',
+            'nim.unique' => 'NIM telah tersedia',
+            'nama.required' => 'Nama harus diisi',
+            'jurusan.required' => 'Jurusan harus diisi'
+        ]);
+        $data = [
+            'nim' => $request->nim,
+            'nama' => $request->nama,
+            'jurusan' => $request->jurusan
+        ];
+        MahasiswaModel::create($data);
+        return redirect()->to('mahasiswa')->with('success', 'Berhasil menambah data');
     }
 
     /**
@@ -44,7 +68,7 @@ class MahasiswaController extends Controller
     public function edit(string $id)
     {
         //
-    }
+    } 
 
     /**
      * Update the specified resource in storage.
