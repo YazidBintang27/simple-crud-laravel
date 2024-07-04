@@ -67,7 +67,8 @@ class MahasiswaController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $data = MahasiswaModel::where('nim', $id)->first();
+        return view('edit')->with('data', $data);
     } 
 
     /**
@@ -75,7 +76,20 @@ class MahasiswaController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'nama' => 'required',
+            'jurusan' => 'required'
+        ],[
+            'nama.required' => 'Nama harus diisi',
+            'jurusan.required' => 'Jurusan harus diisi'
+        ]);
+        $data = [
+            'nim' => $request->nim,
+            'nama' => $request->nama,
+            'jurusan' => $request->jurusan
+        ];
+        MahasiswaModel::where('nim', $id)->update($data);
+        return redirect()->to('mahasiswa')->with('success', 'Berhasil mengubah data');
     }
 
     /**
