@@ -36,7 +36,11 @@
                     <td>{{$item->jurusan}}</td>
                     <td>
                         <a href='{{url('mahasiswa/' . $item->nim . '/edit')}}' class="btn btn-warning btn-sm">Edit</a>
-                        <a href='{{url('mahasiswa/' . $item->nim)}}' class="btn btn-danger btn-sm">Del</a>
+                        <form action="{{url('mahasiswa/' . $item->nim)}}" method="post" class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" name="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
                     </td>
                 </tr>
                 <?php $id++ ?>
